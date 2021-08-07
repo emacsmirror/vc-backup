@@ -39,8 +39,7 @@
 ;;; Code:
 
 (eval-when-compile
-  (require 'subr-x)
-  (require 'rx))
+  (require 'subr-x))
 (require 'files)
 (require 'cl-lib)
 (require 'diff)
