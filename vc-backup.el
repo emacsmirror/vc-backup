@@ -177,7 +177,7 @@ The results are written into BUFFER."
       (insert "Backups for " file "\n\n")
       (dolist (rev (nreverse (vc-backup-list-backup-versions file)))
 	(let* ((attr (file-attributes (cdr rev)))
-	       (stime (file-attribute-status-change-time attr))
+	       (stime (file-attribute-modification-time attr))
 	       (sdate (format-time-string "%c" stime)))
 	  (insert (format "v%s\tFrom %s\n" (car rev) sdate)))))
     (goto-char (point-min))
