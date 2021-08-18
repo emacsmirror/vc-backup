@@ -159,8 +159,8 @@ If FILE-OR-BACKUP is the actual file, the value of
 version number as a string or the value of
 `vc-backup--previous-tag' for unversioned backups."
   (cond ((not (backup-file-name-p file-or-backup)) vc-backup--current-tag)
-	((string-match "\\.~\\([[:digit:]]+\\)~\\'" file-or-backup)
-	 (match-string 1 file-or-backup))
+	((string-match (concat file-name-version-regexp "\\'") file-or-backup)
+	 (substring file-or-backup (match-beginning 0)))
 	(t vc-backup--previous-tag)))
 
 (defun vc-backup--list-backup-versions (file)
@@ -299,7 +299,7 @@ The results are written into BUFFER."
 	(let* ((attr (file-attributes (cdr rev)))
 	       (stime (file-attribute-modification-time attr))
 	       (sdate (format-time-string "%c" stime)))
-	  (insert (format "v%s\tFrom %s\n" (car rev) sdate)))))
+	  (insert (format "v%-25s%s\n" (car rev) sdate)))))
     (goto-char (point-min))
     (forward-line 2))
   'limit-unsupported)
@@ -313,7 +313,7 @@ The results are written into BUFFER."
 (define-derived-mode vc-backup-log-view-mode log-view-mode "Backup Log"
   "VC-Log Mode for Backup."
   (setq-local log-view-file-re "\\`Backups for \\(.+\\)$")
-  (setq-local log-view-message-re "^v\\([[:alnum:]]+\\)"))
+  (setq-local log-view-message-re (concat "^v\\(" file-name-version-regexp "\\)")))
 
 ;; - show-log-entry (revision)
 
@@ -325,14 +325,14 @@ The results are written into BUFFER."
   "Generate a diff for FILES between versions REV1 and REV2.
 BUFFER and ASYNC as interpreted as specified in vc.el."
   (cl-assert (= (length files) 1))
+  (setq rev1 (or rev1 vc-backup--current-tag))
   (setq rev2 (or rev2 (vc-backup--last-rev files)))
   (save-window-excursion
     (let ((dirty nil))
       (dolist (file files)
 	(let ((diff (diff-no-select
 		     (vc-backup--get-backup-file file rev2)
-		     (vc-backup--get-backup-file
-		      file (or rev1 vc-backup--current-tag))
+		     (vc-backup--get-backup-file file rev1)
 		     (vc-switches 'Backup 'diff)
 		     (not async)
 		     (get-buffer (or buffer "*vc-diff*")))))
