@@ -330,7 +330,7 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
   (setq rev1 (or rev1 vc-backup--current-tag))
   (setq rev2 (or rev2 (vc-backup--last-rev files)))
   (save-window-excursion
-    (let ((dirty nil))
+    (let ((dirty 0))
       (dolist (file files)
 	(let ((diff (diff-no-select
 		     (vc-backup--get-backup-file file rev2)
@@ -341,8 +341,8 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
 	  (unless async
 	    (with-current-buffer diff
 	      (unless (search-forward "no differences" nil t)
-		(setq dirty t))))))
-      (if dirty 1 0))))
+		(setq dirty 1))))))
+      dirty)))
 
 (defun vc-backup-revision-completion-table (files)
   "Return a list of revisions for FILES."
