@@ -154,9 +154,10 @@ recency."
 
 (defun vc-backup--extract-version (file-or-backup)
   "Return a revision string for FILE-OR-BACKUP.
-If FILE-OR-BACKUP is the actual file, \"real\" is
-returned.  Otherwise, it returns the version number as a string or
-\"prev\" for unversioned backups."
+If FILE-OR-BACKUP is the actual file, the value of
+`vc-backup--current-tag' is returned.  Otherwise, it returns the
+version number as a string or the value of
+`vc-backup--previous-tag' for unversioned backups."
   (cond ((not (backup-file-name-p file-or-backup)) vc-backup--current-tag)
 	((string-match "\\.~\\([[:digit:]]+\\)~\\'" file-or-backup)
 	 (match-string 1 file-or-backup))
