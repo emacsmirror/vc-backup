@@ -6,18 +6,17 @@
 ;; Version: 1.0.0
 ;; Keywords: vc
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; vc-backup.el free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation, either version 3 of the License,
+;; or (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; vc-backup.el is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; For a copy of the license, please see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -25,29 +24,102 @@
 ;; is recommended to enable `version-control' and related variables,
 ;; to make the most use of it.
 ;;
-;; To install this VC backend, evaluate
-;;
-;;	(add-to-list 'vc-handled-backends 'Backup t)
-;;
-;; or add it to your initialisation file.
-;;
 ;; There is no need or ability to manually "commit" anything, as
 ;; backups should be generated automatically.  To force a backup, read
 ;; up on the documentation of `save-buffer'.  Backups can be viewed
 ;; using the command `vc-print-log'.
 
+;;; Todo:
+
+;; 1) Implement the rest of the vc interface.  See the comment at the
+;; beginning of vc.el. The current status is:
+
+;; FUNCTION NAME				STATUS
+;; BACKEND PROPERTIES
+;; * revision-granularity			OK
+;; - update-on-retrieve-tag			??
+;; STATE-QUERYING FUNCTIONS
+;; * registered (file)				OK
+;; * state (file)				OK
+;; - dir-status-files (dir files update-function) ??
+;; - dir-extra-headers (dir)			??
+;; - dir-printer (fileinfo)			??
+;; - status-fileinfo-extra (file)		??
+;; * working-revision (file)			OK
+;; * checkout-model (files)			OK
+;; - mode-line-string (file)			??
+;; STATE-CHANGING FUNCTIONS
+;; * create-repo ()				??
+;; * register (files &optional comment)		??
+;; - responsible-p (file)			OK
+;; - receive-file (file rev)			??
+;; - unregister (file)				??
+;; * checkin (files comment &optional rev)	??
+;; * find-revision (file rev buffer)		OK
+;; * checkout (file &optional rev)		OK
+;; * revert (file &optional contents-done)	??
+;; - merge-file (file &optional rev1 rev2)		??
+;; - merge-branch ()				??
+;; - merge-news (file)				??
+;; - pull (prompt)				??
+;; ? push (prompt)				??
+;; - steal-lock (file &optional revision)	??
+;; - modify-change-comment (files rev comment)	??
+;; - mark-resolved (files)			??
+;; - find-admin-dir (file)			OK
+;; HISTORY FUNCTIONS
+;; * print-log (files buffer &optional shortlog start-revision limit) OK
+;; * log-outgoing (buffer remote-location)	??
+;; * log-incoming (buffer remote-location)	??
+;; - log-search (buffer pattern)			??
+;; - log-view-mode ()				OK
+;; - show-log-entry (revision)			??
+;; - comment-history (file)			??
+;; - update-changelog (files)			??
+;; * diff (files &optional rev1 rev2 buffer async) OK
+;; - revision-completion-table (files)		OK
+;; - annotate-command (file buf &optional rev)	??
+;; - annotate-time ()				??
+;; - annotate-current-time ()			??
+;; - annotate-extract-revision-at-line ()	??
+;; - region-history (file buffer lfrom lto)	??
+;; - region-history-mode ()			??
+;; - mergebase (rev1 &optional rev2)		??
+;; TAG SYSTEM
+;; - create-tag (dir name branchp)		??
+;; - retrieve-tag (dir name update)		??
+;; MISCELLANEOUS
+;; - make-version-backups-p (file)		OK
+;; - root (file)				??
+;; - ignore (file &optional directory remove)	??
+;; - ignore-completion-table (directory)	??
+;; - previous-revision (file rev)		OK
+;; - next-revision (file rev)			OK
+;; - log-edit-mode ()				??
+;; - check-headers ()				??
+;; - delete-file (file)				OK
+;; - rename-file (old new)			OK
+;; - find-file-hook ()				??
+;; - extra-menu ()				??
+;; - extra-dir-menu ()				??
+;; - conflicted-files (dir)			??
+
 ;;; Code:
 
 (eval-when-compile
   (require 'subr-x))
+
 (require 'files)
 (require 'cl-lib)
 (require 'diff)
 (require 'vc)
 (require 'log-view)
 
+;; Internal Functions
+
 (defconst vc-backup-current-tag "real"
   "Tag used for the actual file.")
+
 (defconst vc-backup-previous-tag "prev"
   "Tag used for unversioned backup.")
 
@@ -117,18 +189,34 @@ and BACKUP is the actual backup file."
   (thread-last (vc-backup-list-backups file)
     car
     vc-backup-extract-version))
-
 
+;; BACKEND PROPERTIES
 
 (defun vc-backup-revision-granularity ()
   "Inform VC that this backend only operates on singular files."
   'file)
+
+;; - update-on-retrieve-tag
+
+;; STATE-QUERYING FUNCTIONS
 
 ;;;###autoload
 (defun vc-backup-registered (file)
   "Inform VC that FILE will work if a backup can be found."
   (or (not (null (diff-latest-backup-file file)))
       (backup-file-name-p file)))
+
+(defun vc-backup-state (_file)
+  "Inform VC that there is no information about any file."
+  nil)
+
+;; - dir-status-files (dir files update-function)
+
+;; - dir-extra-headers (dir)
+
+;; - dir-printer (fileinfo)
+
+;; - status-fileinfo-extra (file)
 
 (defun vc-backup-working-revision (file)
   "Check if FILE is the real file or a backup."
@@ -138,14 +226,24 @@ and BACKUP is the actual backup file."
   "Inform VC that files are not locked."
   'implicit)
 
-(defun vc-backup-state (_file)
-  "Inform VC that there is no information about any file."
-  nil)
+;; - mode-line-string (file)
+
+;; STATE-CHANGING FUNCTIONS
+
+;; * create-repo ()
+
+;; * register (files &optional comment)
 
 ;;;###autoload
 (defun vc-backup-responsible-p (file)
   "Inform VC that this backend requires a backup for FILE."
   (not (null (diff-latest-backup-file file))))
+
+;; - receive-file (file rev)
+
+;; - unregister (file)
+
+;; * checkin (files comment &optional rev)
 
 (defun vc-backup-find-revision (file rev buffer)
   "Open a backup of the version REV for FILE in BUFFER."
@@ -163,9 +261,29 @@ If REV is non-nil, checkout that version."
   (copy-file (vc-backup-get-backup-file file rev)
 	     file t))
 
+;; * revert (file &optional contents-done)
+
+;; - merge-file (file &optional rev1 rev2)
+
+;; - merge-branch ()
+
+;; - merge-news (file)
+
+;; - pull (prompt)
+
+;; ? push (prompt)
+
+;; - steal-lock (file &optional revision)
+
+;; - modify-change-comment (files rev comment)
+
+;; - mark-resolved (files)
+
 (defun vc-backup-find-admin-dir (file)
   "Inform VC that the FILE's backup directory is the administrative directory."
   (file-name-directory (diff-latest-backup-file file)))
+
+;; HISTORY FUNCTIONS
 
 (defun vc-backup-print-log (file buffer &optional _shortlog _start-revision _limit)
   "Generate a listing of old backup versions for FILE.
@@ -184,10 +302,22 @@ The results are written into BUFFER."
     (forward-line 2))
   'limit-unsupported)
 
+;; * log-outgoing (buffer remote-location)
+
+;; * log-incoming (buffer remote-location)
+
+;; - log-search (buffer pattern)
+
 (define-derived-mode vc-backup-log-view-mode log-view-mode "Backup Log"
   "VC-Log Mode for Backup."
   (setq-local log-view-file-re "\\`Backups for \\(.+\\)$")
   (setq-local log-view-message-re "^v\\([[:alnum:]]+\\)"))
+
+;; - show-log-entry (revision)
+
+;; - comment-history (file)
+
+;; - update-changelog (files)
 
 (defun vc-backup-diff (files &optional rev1 rev2 buffer async)
   "Generate a diff for FILES between versions REV1 and REV2.
@@ -215,9 +345,37 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
   (cl-assert (= (length files) 1))
   (mapcar #'car (vc-backup-list-backup-versions (car files))))
 
+;; - annotate-command (file buf &optional rev)
+
+;; - annotate-time ()
+
+;; - annotate-current-time ()
+
+;; - annotate-extract-revision-at-line ()
+
+;; - region-history (file buffer lfrom lto)
+
+;; - region-history-mode ()
+
+;; - mergebase (rev1 &optional rev2)
+
+;; TAG SYSTEM
+
+;; - create-tag (dir name branchp)
+
+;; - retrieve-tag (dir name update)
+
+;; MISCELLANEOUS
+
 (defun vc-backup-make-version-backups-p (_file)
   "Always allow backup files to be made for this backend."
   t)
+
+;; - root (file)
+
+;; - ignore (file &optional directory remove)
+
+;; - ignore-completion-table (directory)
 
 (defun vc-backup-previous-revision (file rev)
   "Determine the revision before REV for FILE."
@@ -236,6 +394,10 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
 	  ((and (natnump index) (< index (length backups)))
 	   (car (nth (1+ index) backups)))
 	  (t vc-backup-current-tag))))
+
+;; - log-edit-mode ()
+
+;; - check-headers ()
 
 (defun vc-backup-delete-file (file)
   "Delete FILE and all its backups."
@@ -256,5 +418,22 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
       (let ((new-backup (concat new-part (substring backup (length old-part)))))
 	(rename-file backup new-backup t)))))
 
+;; - find-file-hook ()
+
+;; - extra-menu ()
+
+;; - extra-dir-menu ()
+
+;; - conflicted-files (dir)
+
+;;; This snippet enables the Backup VC backend so it will work once
+;;; this file is loaded.  By also marking it for inclusion in the
+;;; autoloads file, installing packaged versions of this should work
+;;; without users having to monkey with their init files.
+
+;;;###autoload
+(add-to-list 'vc-handled-backends 'Backup t)
+
 (provide 'vc-backup)
+
 ;;; vc-backup.el ends here
