@@ -34,75 +34,75 @@
 ;; 1) Implement the rest of the vc interface.  See the comment at the
 ;; beginning of vc.el. The current status is:
 
-;; FUNCTION NAME				STATUS
+;; FUNCTION NAME                                STATUS
 ;; BACKEND PROPERTIES
-;; * revision-granularity			OK
-;; - update-on-retrieve-tag			??
+;; * revision-granularity                       OK
+;; - update-on-retrieve-tag                     ??
 ;; STATE-QUERYING FUNCTIONS
-;; * registered (file)				OK
-;; * state (file)				OK
+;; * registered (file)                          OK
+;; * state (file)                               OK
 ;; - dir-status-files (dir files update-function) ??
-;; - dir-extra-headers (dir)			??
-;; - dir-printer (fileinfo)			??
-;; - status-fileinfo-extra (file)		??
-;; * working-revision (file)			OK
-;; * checkout-model (files)			OK
-;; - mode-line-string (file)			??
+;; - dir-extra-headers (dir)                    ??
+;; - dir-printer (fileinfo)                     ??
+;; - status-fileinfo-extra (file)               ??
+;; * working-revision (file)                    OK
+;; * checkout-model (files)                     OK
+;; - mode-line-string (file)                    ??
 ;; STATE-CHANGING FUNCTIONS
-;; * create-repo ()				??
-;; * register (files &optional comment)		??
-;; - responsible-p (file)			OK
-;; - receive-file (file rev)			??
-;; - unregister (file)				??
-;; * checkin (files comment &optional rev)	??
-;; * find-revision (file rev buffer)		OK
-;; * checkout (file &optional rev)		OK
-;; * revert (file &optional contents-done)	??
-;; - merge-file (file &optional rev1 rev2)		??
-;; - merge-branch ()				??
-;; - merge-news (file)				??
-;; - pull (prompt)				??
-;; ? push (prompt)				??
-;; - steal-lock (file &optional revision)	??
-;; - modify-change-comment (files rev comment)	??
-;; - mark-resolved (files)			??
-;; - find-admin-dir (file)			OK
+;; * create-repo ()                             ??
+;; * register (files &optional comment)         ??
+;; - responsible-p (file)                       OK
+;; - receive-file (file rev)                    ??
+;; - unregister (file)                          ??
+;; * checkin (files comment &optional rev)      ??
+;; * find-revision (file rev buffer)            OK
+;; * checkout (file &optional rev)              OK
+;; * revert (file &optional contents-done)      ??
+;; - merge-file (file &optional rev1 rev2)      ??
+;; - merge-branch ()                            ??
+;; - merge-news (file)                          ??
+;; - pull (prompt)                              ??
+;; ? push (prompt)                              ??
+;; - steal-lock (file &optional revision)       ??
+;; - modify-change-comment (files rev comment)  ??
+;; - mark-resolved (files)                      ??
+;; - find-admin-dir (file)                      OK
 ;; HISTORY FUNCTIONS
 ;; * print-log (files buffer &optional shortlog start-revision limit) OK
-;; * log-outgoing (buffer remote-location)	??
-;; * log-incoming (buffer remote-location)	??
-;; - log-search (buffer pattern)			??
-;; - log-view-mode ()				OK
-;; - show-log-entry (revision)			??
-;; - comment-history (file)			??
-;; - update-changelog (files)			??
+;; * log-outgoing (buffer remote-location)      ??
+;; * log-incoming (buffer remote-location)      ??
+;; - log-search (buffer pattern)                ??
+;; - log-view-mode ()                           OK
+;; - show-log-entry (revision)                  ??
+;; - comment-history (file)                     ??
+;; - update-changelog (files)                   ??
 ;; * diff (files &optional rev1 rev2 buffer async) OK
-;; - revision-completion-table (files)		OK
-;; - annotate-command (file buf &optional rev)	??
-;; - annotate-time ()				??
-;; - annotate-current-time ()			??
-;; - annotate-extract-revision-at-line ()	??
-;; - region-history (file buffer lfrom lto)	??
-;; - region-history-mode ()			??
-;; - mergebase (rev1 &optional rev2)		??
+;; - revision-completion-table (files)          OK
+;; - annotate-command (file buf &optional rev)  ??
+;; - annotate-time ()                           ??
+;; - annotate-current-time ()                   ??
+;; - annotate-extract-revision-at-line ()       ??
+;; - region-history (file buffer lfrom lto)     ??
+;; - region-history-mode ()                     ??
+;; - mergebase (rev1 &optional rev2)            ??
 ;; TAG SYSTEM
-;; - create-tag (dir name branchp)		??
-;; - retrieve-tag (dir name update)		??
+;; - create-tag (dir name branchp)              ??
+;; - retrieve-tag (dir name update)             ??
 ;; MISCELLANEOUS
-;; - make-version-backups-p (file)		OK
-;; - root (file)				??
-;; - ignore (file &optional directory remove)	??
-;; - ignore-completion-table (directory)	??
-;; - previous-revision (file rev)		OK
-;; - next-revision (file rev)			OK
-;; - log-edit-mode ()				??
-;; - check-headers ()				??
-;; - delete-file (file)				OK
-;; - rename-file (old new)			OK
-;; - find-file-hook ()				??
-;; - extra-menu ()				??
-;; - extra-dir-menu ()				??
-;; - conflicted-files (dir)			??
+;; - make-version-backups-p (file)              OK
+;; - root (file)                                ??
+;; - ignore (file &optional directory remove)   ??
+;; - ignore-completion-table (directory)        ??
+;; - previous-revision (file rev)               OK
+;; - next-revision (file rev)                   OK
+;; - log-edit-mode ()                           ??
+;; - check-headers ()                           ??
+;; - delete-file (file)                         OK
+;; - rename-file (old new)                      OK
+;; - find-file-hook ()                          ??
+;; - extra-menu ()                              ??
+;; - extra-dir-menu ()                          ??
+;; - conflicted-files (dir)                     ??
 
 ;;; Code:
 
@@ -129,9 +129,9 @@
       (replace-regexp-in-string
        "!!?"
        (lambda (rep)
-	 (if (= (length rep) 2) "!" "/"))
+         (if (= (length rep) 2) "!" "/"))
        (file-name-nondirectory
-	(file-name-sans-versions file-or-backup)))
+        (file-name-sans-versions file-or-backup)))
     file-or-backup))
 
 (defun vc-backup--list-backups (file-or-list)
@@ -142,14 +142,14 @@ recency."
   (let (versions)
     (dolist (file (if (listp file-or-list) file-or-list (list file-or-list)))
       (let ((filename (thread-last (vc-backup--get-read file)
-			expand-file-name
-			make-backup-file-name
-			file-name-sans-versions)))
-	(push (directory-files (file-name-directory filename) t
-			       (concat (regexp-quote (file-name-nondirectory filename))
-				       file-name-version-regexp "\\'")
-			       t)
-	      versions)))
+                        expand-file-name
+                        make-backup-file-name
+                        file-name-sans-versions)))
+        (push (directory-files (file-name-directory filename) t
+                               (concat (regexp-quote (file-name-nondirectory filename))
+                                       file-name-version-regexp "\\'")
+                               t)
+              versions)))
     (sort (apply #'nconc versions) #'file-newer-than-file-p)))
 
 (defun vc-backup--extract-version (file-or-backup)
@@ -159,9 +159,9 @@ If FILE-OR-BACKUP is the actual file, the value of
 version number as a string or the value of
 `vc-backup--previous-tag' for unversioned backups."
   (cond ((not (backup-file-name-p file-or-backup)) vc-backup--current-tag)
-	((string-match (concat file-name-version-regexp "\\'") file-or-backup)
-	 (substring file-or-backup (match-beginning 0)))
-	(t vc-backup--previous-tag)))
+        ((string-match (concat file-name-version-regexp "\\'") file-or-backup)
+         (substring file-or-backup (match-beginning 0)))
+        (t vc-backup--previous-tag)))
 
 (defun vc-backup--list-backup-versions (file)
   "Return an association list of backup files and versions for FILE.
@@ -172,19 +172,19 @@ file."
   (let (files)
     (dolist (backup (vc-backup--list-backups file))
       (push (cons (vc-backup--extract-version backup) backup)
-	    files))
+            files))
     files))
 
 (defun vc-backup--get-backup-file (file rev)
   "Return backup file for FILE of the version REV."
   (cond ((string= rev vc-backup--current-tag) file)
-	((string= rev vc-backup--previous-tag)
-	 (let ((prev (thread-last (expand-file-name file)
-		       make-backup-file-name
-		       file-name-sans-versions
-		       (format "%~"))))
-	   (and (file-exists-p prev) prev)))
-	((cdr (assoc rev (vc-backup--list-backup-versions file))))))
+        ((string= rev vc-backup--previous-tag)
+         (let ((prev (thread-last (expand-file-name file)
+                       make-backup-file-name
+                       file-name-sans-versions
+                       (format "%~"))))
+           (and (file-exists-p prev) prev)))
+        ((cdr (assoc rev (vc-backup--list-backup-versions file))))))
 
 (defun vc-backup--last-rev (file)
   "Return the revision of the last backup for FILE."
@@ -257,11 +257,11 @@ file."
 If REV is non-nil, checkout that version."
   (cl-assert (= (length file) 1))
   (let ((backup-inhibited nil)
-	(make-backup-files t))
+        (make-backup-files t))
     (with-current-buffer (find-file-noselect file)
       (backup-buffer)))
   (copy-file (vc-backup--get-backup-file file rev)
-	     file t))
+             file t))
 
 ;; * revert (file &optional contents-done)
 
@@ -296,12 +296,12 @@ The results are written into BUFFER."
       (erase-buffer)
       (insert "Backups for " file "\n\n")
       (dolist (rev (nreverse (vc-backup--list-backup-versions file)))
-	(let* ((attr (file-attributes (cdr rev)))
+        (let* ((attr (file-attributes (cdr rev)))
                (uid (file-attribute-user-id attr))
                (user (or (user-login-name uid) uid))
-	       (time (file-attribute-modification-time attr))
-	       (date (format-time-string "%c" time)))
-	  (insert (format "v%-25s%s (%s)\n" (car rev) date user)))))
+               (time (file-attribute-modification-time attr))
+               (date (format-time-string "%c" time)))
+          (insert (format "v%-25s%s (%s)\n" (car rev) date user)))))
     (goto-char (point-min))
     (forward-line 2))
   'limit-unsupported)
@@ -332,16 +332,16 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
   (save-window-excursion
     (let ((dirty 0))
       (dolist (file files)
-	(let ((diff (diff-no-select
-		     (vc-backup--get-backup-file file rev2)
-		     (vc-backup--get-backup-file file rev1)
-		     (vc-switches 'Backup 'diff)
-		     (not async)
-		     (get-buffer (or buffer "*vc-diff*")))))
-	  (unless async
-	    (with-current-buffer diff
-	      (unless (search-forward "no differences" nil t)
-		(setq dirty 1))))))
+        (let ((diff (diff-no-select
+                     (vc-backup--get-backup-file file rev2)
+                     (vc-backup--get-backup-file file rev1)
+                     (vc-switches 'Backup 'diff)
+                     (not async)
+                     (get-buffer (or buffer "*vc-diff*")))))
+          (unless async
+            (with-current-buffer diff
+              (unless (search-forward "no differences" nil t)
+                (setq dirty 1))))))
       dirty)))
 
 (defun vc-backup-revision-completion-table (files)
@@ -384,20 +384,20 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
 (defun vc-backup-previous-revision (file rev)
   "Determine the revision before REV for FILE."
   (let* ((backups (vc-backup--list-backups file))
-	 (index (cl-position rev backups :key #'car)))
+         (index (cl-position rev backups :key #'car)))
     (cond ((string= rev vc-backup--current-tag) (car backups))
-	  ((string= rev vc-backup--previous-tag) nil)
-	  ((and (natnump index) (> index 0))
-	   (car (nth (1- index) backups))))))
+          ((string= rev vc-backup--previous-tag) nil)
+          ((and (natnump index) (> index 0))
+           (car (nth (1- index) backups))))))
 
 (defun vc-backup-next-revision (file rev)
   "Determine the revision after REV for FILE."
   (let* ((backups (vc-backup--list-backups file))
-	 (index (cl-position rev backups :key #'car)))
+         (index (cl-position rev backups :key #'car)))
     (cond ((string= rev vc-backup--current-tag) nil)
-	  ((and (natnump index) (< index (length backups)))
-	   (car (nth (1+ index) backups)))
-	  (t vc-backup--current-tag))))
+          ((and (natnump index) (< index (length backups)))
+           (car (nth (1+ index) backups)))
+          (t vc-backup--current-tag))))
 
 ;; - log-edit-mode ()
 
@@ -413,14 +413,14 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
   "Rename OLD-FILE to NEW-FILE and all its backup accordingly."
   (rename-file old-file new-file)
   (let ((new-part (thread-last (expand-file-name new-file)
-		    make-backup-file-name
-		    file-name-sans-versions))
-	(old-part (thread-last (expand-file-name old-file)
-		    make-backup-file-name
-		    file-name-sans-versions)))
+                    make-backup-file-name
+                    file-name-sans-versions))
+        (old-part (thread-last (expand-file-name old-file)
+                    make-backup-file-name
+                    file-name-sans-versions)))
     (dolist (backup (vc-backup--list-backups old-file))
       (let ((new-backup (concat new-part (substring backup (length old-part)))))
-	(rename-file backup new-backup t)))))
+        (rename-file backup new-backup t)))))
 
 ;; - find-file-hook ()
 
