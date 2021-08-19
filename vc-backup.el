@@ -124,7 +124,7 @@
 (defconst vc-backup--previous-tag "prev"
   "Tag used for unversioned backup.")
 
-(defun vc-backup--get-read (file-or-backup)
+(defun vc-backup--get-real (file-or-backup)
   "Return the actual file behind FILE-OR-BACKUP."
   (if (backup-file-name-p file-or-backup)
       (replace-regexp-in-string
@@ -142,7 +142,7 @@ function returns all backups for these files, in order of their
 recency."
   (let (versions)
     (dolist (file (if (listp file-or-list) file-or-list (list file-or-list)))
-      (let ((filename (thread-last (vc-backup--get-read file)
+      (let ((filename (thread-last (vc-backup--get-real file)
                         expand-file-name
                         make-backup-file-name
                         file-name-sans-versions)))
