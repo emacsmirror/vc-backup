@@ -1,7 +1,7 @@
 vc-backup
 =========
 
-vc-backup is a [vc][vc] backend that uses backups for simgle-file
+vc-backup is a [vc][vc] backend that uses backups for single-file
 version control.
 
 Installation
