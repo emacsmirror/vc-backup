@@ -13,13 +13,10 @@ Installation
 Usage
 -----
 
-To activate the backend, add
-
-	(add-to-list 'vc-handled-backends 'Backup t)
-
-to your initialisation file. It is recommended to enable
-`version-control` so as to have multiple versions of a file
-accessible.
+`vc-backup.el` enables itself automatically via autoloading. It is
+recommended to enable `version-control` so as to have multiple
+versions of a file accessible. Increasing `kept-new-versions` makes
+sure you have more versions to compare.
 
 Bugs
 ----
