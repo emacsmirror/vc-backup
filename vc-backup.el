@@ -298,11 +298,12 @@ The results are written into BUFFER."
       (insert "Backups for " file "\n\n")
       (dolist (rev (nreverse (vc-backup--list-backup-versions file)))
         (let* ((attr (file-attributes (cdr rev)))
+               (base (file-name-nondirectory file))
                (uid (file-attribute-user-id attr))
                (user (or (user-login-name uid) uid))
                (time (file-attribute-modification-time attr))
                (date (format-time-string "%c" time)))
-          (insert (format "v%-25s%s (%s)\n" (car rev) date user)))))
+          (insert (format "%s%s\t%s (%s)\n" base (car rev) date user)))))
     (goto-char (point-min))
     (forward-line 2))
   'limit-unsupported)
@@ -316,7 +317,7 @@ The results are written into BUFFER."
 (define-derived-mode vc-backup-log-view-mode log-view-mode "Backup Log"
   "VC-Log Mode for Backup."
   (setq-local log-view-file-re "\\`Backups for \\(.+\\)$")
-  (setq-local log-view-message-re (concat "^v\\(" file-name-version-regexp "\\)")))
+  (setq-local log-view-message-re (concat "^.*?\\(" file-name-version-regexp "\\)")))
 
 ;; - show-log-entry (revision)
 
