@@ -128,6 +128,9 @@
 (defun vc-backup--get-real (file-or-backup)
   "Return the actual file behind FILE-OR-BACKUP."
   (if (backup-file-name-p file-or-backup)
+      ;; FIXME: The user may overwrite
+      ;; `make-backup-file-name-function' and use something else
+      ;; besides exclamations points to save files.
       (replace-regexp-in-string
        "!!?"
        (lambda (rep)
