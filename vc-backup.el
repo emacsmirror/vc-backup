@@ -339,8 +339,11 @@ The results are written into BUFFER."
   "Generate a diff for FILES between versions REV1 and REV2.
 BUFFER and ASYNC as interpreted as specified in vc.el."
   (cl-assert (= (length files) 1))
-  (setq rev1 (or rev1 vc-backup--current-tag))
   (setq rev2 (or rev2 (vc-backup--last-rev files)))
+  (setq rev1 (or rev1 (vc-backup-previous-revision
+                       (if (consp files) (car files) files)
+                       rev2)
+                 vc-backup--current-tag))
   (save-window-excursion
     (let ((dirty 0))
       (dolist (file files)
@@ -396,11 +399,15 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
 (defun vc-backup-previous-revision (file rev)
   "Determine the revision before REV for FILE."
   (let* ((backups (vc-backup--list-backups file))
-         (index (cl-position rev backups :key #'car)))
+         (index (cl-position
+                 rev backups
+                 :key #'vc-backup--extract-version
+                 :test #'string=)))
     (cond ((string= rev vc-backup--current-tag) (car backups))
           ((string= rev vc-backup--previous-tag) nil)
           ((and (natnump index) (> index 0))
-           (car (nth (1- index) backups))))))
+           (vc-backup--extract-version
+            (nth (1- index) backups))))))
 
 (defun vc-backup-next-revision (file rev)
   "Determine the revision after REV for FILE."
