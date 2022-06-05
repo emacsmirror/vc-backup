@@ -147,7 +147,8 @@ function returns all backups for these files, in order of their
 recency."
   (let (versions)
     (dolist (file (if (listp file-or-list) file-or-list (list file-or-list)))
-      (let ((filename (thread-last (vc-backup--get-real file)
+      (let ((filename (thread-last
+                        (vc-backup--get-real file)
                         expand-file-name
                         make-backup-file-name
                         file-name-sans-versions)))
@@ -185,7 +186,8 @@ file."
   "Return backup file for FILE of the version REV."
   (cond ((string= rev vc-backup--current-tag) file)
         ((string= rev vc-backup--previous-tag)
-         (let ((prev (thread-last (expand-file-name file)
+         (let ((prev (thread-last
+                       (expand-file-name file)
                        make-backup-file-name
                        file-name-sans-versions
                        (format "%~"))))
@@ -194,7 +196,8 @@ file."
 
 (defun vc-backup--last-rev (file)
   "Return the revision of the last backup for FILE."
-  (thread-last (vc-backup--list-backups file)
+  (thread-last
+    (vc-backup--list-backups file)
     car
     vc-backup--extract-version))
 
@@ -421,10 +424,12 @@ BUFFER and ASYNC as interpreted as specified in vc.el."
 (defun vc-backup-rename-file (old-file new-file)
   "Rename OLD-FILE to NEW-FILE and all its backup accordingly."
   (rename-file old-file new-file)
-  (let ((new-part (thread-last (expand-file-name new-file)
+  (let ((new-part (thread-last
+                    (expand-file-name new-file)
                     make-backup-file-name
                     file-name-sans-versions))
-        (old-part (thread-last (expand-file-name old-file)
+        (old-part (thread-last
+                    (expand-file-name old-file)
                     make-backup-file-name
                     file-name-sans-versions)))
     (dolist (backup (vc-backup--list-backups old-file))
