@@ -3,8 +3,8 @@
 ;; Copyright (C) 2021, 2022  Free Software Foundation, Inc.
 
 ;; Author: Philip Kaludercic <philipk@posteo.net>
-;; Maintainer: Philip Kaludercic <~pkal/public-inbox@lists.sr.ht>
-;; URL: https://git.sr.ht/~pkal/vc-backup
+;; Maintainer: Philip Kaludercic <philipk@posteo.net>
+;; URL: https://codeberg.org/pkal/vc-backup.el
 ;; Package-Requires: ((emacs "24.3") (compat "28.1.1.0"))
 ;; Version: 1.1.0
 ;; Keywords: vc
