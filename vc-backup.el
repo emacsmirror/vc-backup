@@ -6,7 +6,7 @@
 ;; Maintainer: Philip Kaludercic <philipk@posteo.net>
 ;; URL: https://codeberg.org/pkal/vc-backup.el
 ;; Package-Requires: ((emacs "24.3") (compat "28.1.1.0"))
-;; Version: 1.1.0
+;; Version: 1.1.1
 ;; Keywords: vc
 
 ;; vc-backup.el free software: you can redistribute it and/or modify
